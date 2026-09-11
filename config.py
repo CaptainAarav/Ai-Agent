@@ -1,0 +1,3 @@
+BASE_URL=""
+MODEL="gpt-4o-mini"
+FILE_READ_CHAR_LIMIT=10000

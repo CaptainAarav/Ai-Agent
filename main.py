@@ -1,6 +1,7 @@
 import os
 import argparse
 from dotenv import load_dotenv
+from config import MODEL, BASE_URL
 from openai import OpenAI
 from rich.console import Console
 from rich.markdown import Markdown  
@@ -9,7 +10,7 @@ from rich.table import Table
 
 # loading the api key from .env
 load_dotenv()
-api_key: str = os.environ.get("OPENROUTER_API_KEY")
+api_key: str = os.environ.get("API_KEY")
 
 # checks if the api key was found
 if api_key is None:
@@ -35,14 +36,13 @@ messages = [
 
 # create a new client that talks to openrouter api
 client = OpenAI(
-    base_url="https://openrouter.ai/api/v1",
     api_key=api_key
 )
 
 # creates a new chat completions request with our user prompt and using rich console to show a loading spinning circle
 with console.status("Thinking..."):
     response = client.chat.completions.create(
-        model="openrouter/free",
+        model=MODEL,
         messages=messages,
     )
 
