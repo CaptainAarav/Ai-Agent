@@ -17,6 +17,7 @@ schema_web_search = {
                     "description": "the search query you must provide for search engine for results",
                 },
             },
+            "required": ["query"]
         },
     },
 }

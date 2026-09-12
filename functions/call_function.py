@@ -43,7 +43,10 @@ def call_function(tool_call, working_directory: str, allow_commands: bool = Fals
     function_args["working_directory"] = working_directory 
     
 	# result from calling function
-    result = function_map[tool_call.function.name](**function_args)
+    try:
+        result = function_map[function_name](**function_args)
+    except TypeError as e:
+        result = f"Error: invalid arguments for {function_name}: {e}"
     
 	# returns the tool call details
     return {

@@ -20,9 +20,9 @@ schema_run_python_file = {
 					"type": "array",
 					"items": {"type": "string"},
 					"description": "a list of strings in order of every parameter you want to add to the run command after the pre added python and target file"
-     
 				}
-			}
+			},
+			"required": ["file_path"]
 		}
 	}
 }

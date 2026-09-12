@@ -15,6 +15,7 @@ schema_get_file_content = {
                     "description": "Relative file path to the file you need to access",
                 },
             },
+            "required": ["file_path"]
         },
     },
 }

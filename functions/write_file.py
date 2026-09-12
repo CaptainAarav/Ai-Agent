@@ -9,15 +9,16 @@ schema_write_file = {
         "parameters": {
             "type": "object",
             "properties": {
-				"file_path": {
-					"type": "string",
-					"description": "a relative file path to the file you want to write to"
-				},
-				"content": {
-					"type": "string",
-					"description": "the content you want to overwrite the file with"
-				}
+                "file_path": {
+                    "type": "string",
+                    "description": "a relative file path to the file you want to write to"
+                },
+                "content": {
+                    "type": "string",
+                    "description": "the full new content to write to the file, replacing everything currently in it"
+                }
             },
+            "required": ["file_path", "content"]
         },
     },
 }
