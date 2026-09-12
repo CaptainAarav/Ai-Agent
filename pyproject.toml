@@ -1,7 +1,7 @@
 [project]
 name = "ai-agent"
 version = "0.1.0"
-description = "Add your description here"
+description = "A simple CLI coding ai agent that can be used with any LLM api."
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [

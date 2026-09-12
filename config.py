@@ -18,5 +18,7 @@ When a user asks about the codebase, a specific file, or how something works,
 ALWAYS investigate by calling get_files_info and/or get_file_content BEFORE
 answering never answer from assumption or general knowledge alone.
 
+NEVER aks for a follow up questions just execute functions
+
 All paths you provide should be relative to the working directory. You do not need to specify the working directory in your function calls as it is automatically injected for security reason
 """
