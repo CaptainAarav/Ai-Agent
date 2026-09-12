@@ -16,6 +16,7 @@ def main():
     parser = argparse.ArgumentParser(description="ai coding agent")
     parser.add_argument("user_prompt", type=str, help="User Prompt")
     parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
+    parser.add_argument("--allow_commands", action="store_true", help="Enables the use of destructive commands without permission. USE WITH CAUTION!")
     args = parser.parse_args()
     
     # gets working dir from where user ran command
@@ -29,7 +30,7 @@ def main():
     ]
 
     # runs the agent loop
-    run_agent(client, messages, args.user_prompt, working_directory, verbose=args.verbose)
+    run_agent(client, messages, args.user_prompt, working_directory, verbose=args.verbose, allow_commands=args.allow_commands)
 
 # makes sure that this file is only run not imported
 if __name__ == "__main__":
