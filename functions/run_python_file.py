@@ -2,6 +2,29 @@ import os
 import subprocess
 from config import FILE_RUN_TIMEOUT
 
+schema_run_python_file = {
+	"type": "function",
+	"function": {
+		"name": "run_python_file",
+		"description": "runs a selected python file and returns the stdout or stderr",
+		"parameters": {
+			"type": "object",
+			"properties" : {
+				"file_path": {
+					"type": "string",
+					"description": "relative file path to the function you want to run"
+				},
+				"args": {
+					"type": "array",
+					"items": {"type": "string"},
+					"description": "a list of strings in order of every parameter you want to add to the run command after the pre added python and target file"
+     
+				}
+			}
+		}
+	}
+}
+
 def run_python_file(
 	working_directory: str, file_path: str, args: list[str] | None = None
 ) -> str:

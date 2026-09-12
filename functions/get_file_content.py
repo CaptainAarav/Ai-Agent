@@ -1,6 +1,23 @@
 import os
 from config import FILE_READ_CHAR_LIMIT
 
+schema_get_file_content = {
+    "type": "function",
+    "function": {
+        "name": "get_file_content",
+        "description": "Gets a files content and returns a string of it",
+        "parameters": {
+				"type": "object",
+				"properties": {
+					"file_path": {
+						"type": "string",
+						"description": "Relative file path to the file you need to access"
+					},
+				},
+            },
+        },
+},
+
 def get_file_content(working_directory: str, file_path: str) -> str:
 	# setup a try except block to catch any exceptions from external library
 	try:

@@ -1,8 +1,10 @@
 import os
 import argparse
+import json
 from dotenv import load_dotenv
-from config import MODEL, BASE_URL
+from config import MODEL, BASE_URL, SYSTEM_PROMPT
 from openai import OpenAI
+from call_function import available_functions
 from rich.console import Console
 from rich.markdown import Markdown  
 from rich.panel import Panel
@@ -31,6 +33,7 @@ user_prompt = args.user_prompt
 
 # a new messages list that will store the entire conversations messages
 messages = [
+    {"role": "system", "content": SYSTEM_PROMPT},
     {"role": "user", "content": user_prompt},
 ]
 
@@ -44,27 +47,34 @@ with console.status("Thinking..."):
     response = client.chat.completions.create(
         model=MODEL,
         messages=messages,
+        tools=available_functions,
+        temperature=0,
     )
 
-# formats response content to md
-formatted_response = Markdown(response.choices[0].message.content)
+if response.choices[0].message.tool_calls:
+    for tools_call in response.choices[0].message.tool_calls:
+        function_args = json.loads(tools_call.function.arguments or "{}")
+        print(f"Calling function: {tools_call.function.name}({function_args})")
+else:
+    # formats response content to md
+    formatted_response = Markdown(response.choices[0].message.content)
+    
+    # checks whether --verbose arg was added
+    if args.verbose:
+        # prints all the extra details with formatting using rich
+        console.print(f"User Prompt: [bold white]{user_prompt}[/bold white]", justify="center")
+        table = Table(title="Stats", expand=False)
+        table.add_column("Model")
+        table.add_column("Prompt Tokens", justify="right")
+        table.add_column("Response Tokens", justify="right")
+        table.add_column("Total Tokens", justify="right")
+        table.add_row(
+            response.model,
+            str(response.usage.prompt_tokens),
+            str(response.usage.completion_tokens),
+            str(response.usage.total_tokens),
+        )
+        console.print(table, justify="center")
 
-# checks whether --verbose arg was added
-if args.verbose:
-    # prints all the extra details with formatting using rich
-    console.print(f"User Prompt: [bold white]{user_prompt}[/bold white]", justify="center")
-    table = Table(title="Stats", expand=False)
-    table.add_column("Model")
-    table.add_column("Prompt Tokens", justify="right")
-    table.add_column("Response Tokens", justify="right")
-    table.add_column("Total Tokens", justify="right")
-    table.add_row(
-        response.model,
-        str(response.usage.prompt_tokens),
-        str(response.usage.completion_tokens),
-        str(response.usage.total_tokens),
-    )
-    console.print(table, justify="center")
-
-# prints response content even if --verbose is not set
-console.print(Panel(formatted_response, title="[bold white]Response[/bold white]", border_style="cyan"))
+    # prints response content even if --verbose is not set
+    console.print(Panel(formatted_response, title="[bold white]Response[/bold white]", border_style="cyan"))

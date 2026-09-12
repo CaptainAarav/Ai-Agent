@@ -1,5 +1,26 @@
 import os
 
+schema_write_file = {
+    "type": "function",
+    "function": {
+        "name": "write_file",
+        "description": "overwrites all the content in a selected file",
+        "parameters": {
+            "type": "object",
+            "properties": {
+				"file_path": {
+					"type": "string",
+					"description": "a relative file path to the file you want to write to"
+				},
+				"content": {
+					"type": "string",
+					"description": "the content you want to overwrite the file with"
+				}
+            },
+        },
+    },
+}
+
 def write_file(working_directory: str, file_path: str, content: str) -> str:
     # setup a try except block to catch any exceptions from external library
 	try:
