@@ -4,6 +4,7 @@ from functions.get_file_content import get_file_content
 from functions.get_files_info import get_files_info
 from functions.write_file import write_file
 from functions.run_python_file import run_python_file
+from functions.web_search import web_search
 
 # maps each function str to the callable function
 function_map: dict[str: Callable[..., str]] = {
@@ -11,6 +12,7 @@ function_map: dict[str: Callable[..., str]] = {
 	"get_file_content": get_file_content,
 	"write_file": write_file,
 	"run_python_file": run_python_file,
+    "web_search": web_search,
 }
 
 DESTRUCTIVE_FUNCTIONS = {"write_file", "run_python_file"}
