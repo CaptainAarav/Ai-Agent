@@ -6,7 +6,7 @@ from display import console, show_thinking, show_calling_function, show_tool_res
 
 
 # runs agent loop
-def run_agent(client, messages, user_prompt, verbose=False):
+def run_agent(client, messages, user_prompt, working_directory: str, verbose=False):
     # loops until agent is done or until agent loop limit is exceeded
     for _ in range(AGENT_LOOP_LIMIT):
         # displays a spinning circle in terminal using rich
@@ -26,7 +26,7 @@ def run_agent(client, messages, user_prompt, verbose=False):
                 function_args = json.loads(tool_call.function.arguments or "{}")
                 show_calling_function(tool_call.function.name, function_args, verbose)
 
-                tool_call_result = call_function(tool_call)
+                tool_call_result = call_function(tool_call, working_directory)
 
                 # checks whether tool call result content is nothing; if so, raises an exception
                 if not tool_call_result["content"]:

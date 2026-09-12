@@ -13,7 +13,7 @@ function_map: dict[str: Callable[..., str]] = {
 	"run_python_file": run_python_file,
 }
 
-def call_function(tool_call, verbose: bool = False) -> dict:
+def call_function(tool_call, working_directory: str) -> dict:
 	# grabs function name and args from tool call
     function_name: str = tool_call.function.name
 	# uses short circuiting to use empty dict if tool call args are not there 
@@ -27,7 +27,7 @@ def call_function(tool_call, verbose: bool = False) -> dict:
 			"content": f"Error: Unknown function: {function_name}",
 		} 
     
-    function_args["working_directory"] = "./calculator"
+    function_args["working_directory"] = working_directory 
     
 	# result from calling function
     result = function_map[tool_call.function.name](**function_args)

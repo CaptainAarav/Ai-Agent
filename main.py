@@ -17,6 +17,9 @@ def main():
     parser.add_argument("user_prompt", type=str, help="User Prompt")
     parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
     args = parser.parse_args()
+    
+    # gets working dir from where user ran command
+    working_directory: str = os.getcwd()
 
     # initialised the ai client and creates the messages list
     client = OpenAI(api_key=api_key)
@@ -26,7 +29,7 @@ def main():
     ]
 
     # runs the agent loop
-    run_agent(client, messages, args.user_prompt, verbose=args.verbose)
+    run_agent(client, messages, args.user_prompt, working_directory, verbose=args.verbose)
 
 # makes sure that this file is only run not imported
 if __name__ == "__main__":

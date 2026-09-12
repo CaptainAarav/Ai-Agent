@@ -1,4 +1,5 @@
 import os
+import sys
 import subprocess
 from config import FILE_RUN_TIMEOUT
 
@@ -47,8 +48,8 @@ def run_python_file(
 		if not file_path.endswith(".py"):
 			return f'Error: "{file_path}" is not a Python file'
 		
-		# builds the command to run
-		command: list[str] = ["python", target_file]
+		# builds the command to be run
+		command: list[str] = [sys.executable, target_file]
 		# adds any extra args provided
 		if args:
 			command.extend(args)
