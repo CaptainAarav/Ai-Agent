@@ -1,8 +1,9 @@
 import os
+import sys
 import argparse
 import json
 from dotenv import load_dotenv
-from config import MODEL, BASE_URL, SYSTEM_PROMPT
+from config import MODEL, BASE_URL, SYSTEM_PROMPT, AGENT_LOOP_LIMIT
 from openai import OpenAI
 from available_functions import available_functions
 from functions.call_function import call_function
@@ -44,45 +45,55 @@ client = OpenAI(
 )
 
 # creates a new chat completions request with our user prompt and using rich console to show a loading spinning circle
-with console.status("Thinking..."):
-    response = client.chat.completions.create(
-        model=MODEL,
-        messages=messages,
-        tools=available_functions,
-        temperature=0,
-    )
+for _ in range(AGENT_LOOP_LIMIT):
 
-if response.choices[0].message.tool_calls:
-    for tool_call in response.choices[0].message.tool_calls:
-        function_args = json.loads(tool_call.function.arguments or "{}")
-        tool_call_result = call_function(tool_call, args.verbose)
-
-        if not tool_call_result["content"]:
-            raise Exception("tool call returned no content")
-        
-        if args.verbose:
-            print(f"-> {tool_call_result["content"]}")
-
-else:
-    # formats response content to md
-    formatted_response = Markdown(response.choices[0].message.content)
-    
-    # checks whether --verbose arg was added
-    if args.verbose:
-        # prints all the extra details with formatting using rich
-        console.print(f"User Prompt: [bold white]{user_prompt}[/bold white]", justify="center")
-        table = Table(title="Stats", expand=False)
-        table.add_column("Model")
-        table.add_column("Prompt Tokens", justify="right")
-        table.add_column("Response Tokens", justify="right")
-        table.add_column("Total Tokens", justify="right")
-        table.add_row(
-            response.model,
-            str(response.usage.prompt_tokens),
-            str(response.usage.completion_tokens),
-            str(response.usage.total_tokens),
+    with console.status("Thinking..."):
+        response = client.chat.completions.create(
+            model=MODEL,
+            messages=messages,
+            tools=available_functions,
+            temperature=0,
         )
-        console.print(table, justify="center")
+    
+    messages.append(response.choices[0].message)
 
-    # prints response content even if --verbose is not set
-    console.print(Panel(formatted_response, title="[bold white]Response[/bold white]", border_style="cyan"))
+    if response.choices[0].message.tool_calls:
+        for tool_call in response.choices[0].message.tool_calls:
+            function_args = json.loads(tool_call.function.arguments or "{}")
+            tool_call_result = call_function(tool_call, args.verbose)
+
+            if not tool_call_result["content"]:
+                raise Exception("tool call returned no content")
+            
+            if args.verbose:
+                print(f"-> {tool_call_result["content"]}")
+            
+            messages.append(tool_call_result)
+
+    else:
+        # formats response content to md
+        formatted_response = Markdown(response.choices[0].message.content)
+        
+        # checks whether --verbose arg was added
+        if args.verbose:
+            # prints all the extra details with formatting using rich
+            console.print(f"User Prompt: [bold white]{user_prompt}[/bold white]", justify="center")
+            table = Table(title="Stats", expand=False)
+            table.add_column("Model")
+            table.add_column("Prompt Tokens", justify="right")
+            table.add_column("Response Tokens", justify="right")
+            table.add_column("Total Tokens", justify="right")
+            table.add_row(
+                response.model,
+                str(response.usage.prompt_tokens),
+                str(response.usage.completion_tokens),
+                str(response.usage.total_tokens),
+            )
+            console.print(table, justify="center")
+
+        # prints response content even if --verbose is not set
+        console.print(Panel(formatted_response, title="[bold white]Response[/bold white]", border_style="cyan"))
+        break
+else:
+    print("agent loop iterations exceeded")
+    sys.exit(1)
