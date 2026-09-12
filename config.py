@@ -17,8 +17,5 @@ When a user asks about the codebase, a specific file, or how something works,
 ALWAYS investigate by calling get_files_info and/or get_file_content BEFORE
 answering never answer from assumption or general knowledge alone.
 
-For general programming questions unrelated to this specific project (e.g.
-"what is a closure"), you may answer directly without calling any functions.
-
 All paths you provide should be relative to the working directory. You do not need to specify the working directory in your function calls as it is automatically injected for security reason
 """
