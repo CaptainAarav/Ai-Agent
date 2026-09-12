@@ -4,7 +4,8 @@ import json
 from dotenv import load_dotenv
 from config import MODEL, BASE_URL, SYSTEM_PROMPT
 from openai import OpenAI
-from call_function import available_functions
+from available_functions import available_functions
+from functions.call_function import call_function
 from rich.console import Console
 from rich.markdown import Markdown  
 from rich.panel import Panel
@@ -52,9 +53,16 @@ with console.status("Thinking..."):
     )
 
 if response.choices[0].message.tool_calls:
-    for tools_call in response.choices[0].message.tool_calls:
-        function_args = json.loads(tools_call.function.arguments or "{}")
-        print(f"Calling function: {tools_call.function.name}({function_args})")
+    for tool_call in response.choices[0].message.tool_calls:
+        function_args = json.loads(tool_call.function.arguments or "{}")
+        tool_call_result = call_function(tool_call, args.verbose)
+
+        if not tool_call_result["content"]:
+            raise Exception("tool call returned no content")
+        
+        if args.verbose:
+            print(f"-> {tool_call_result["content"]}")
+
 else:
     # formats response content to md
     formatted_response = Markdown(response.choices[0].message.content)
