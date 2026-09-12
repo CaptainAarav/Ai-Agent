@@ -1,5 +1,6 @@
 import os
 
+# defines function schema
 schema_get_files_info = {
     "type": "function",
     "function": {

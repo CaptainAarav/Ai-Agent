@@ -5,6 +5,7 @@ from functions.get_files_info import get_files_info
 from functions.write_file import write_file
 from functions.run_python_file import run_python_file
 
+# maps each function str to the callable function
 function_map: dict[str: Callable[..., str]] = {
 	"get_files_info": get_files_info,
 	"get_file_content": get_file_content,
@@ -13,14 +14,12 @@ function_map: dict[str: Callable[..., str]] = {
 }
 
 def call_function(tool_call, verbose: bool = False) -> dict:
+	# grabs function name and args from tool call
     function_name: str = tool_call.function.name
+	# uses short circuiting to use empty dict if tool call args are not there 
     function_args = json.loads(tool_call.function.arguments or "{}")
     
-    if verbose:
-        print(f" - Calling function: {function_name}({function_args})")
-    else:
-        print(f" - Calling function: {function_name}")
-        
+	# checks that tool call function is in the defined function map
     if tool_call.function.name not in function_map:
         return {
 			"role": "tool",
@@ -30,8 +29,10 @@ def call_function(tool_call, verbose: bool = False) -> dict:
     
     function_args["working_directory"] = "./calculator"
     
+	# result from calling function
     result = function_map[tool_call.function.name](**function_args)
     
+	# returns the tool call details
     return {
 		"role": "tool",
 		"tool_call_id": tool_call.id,

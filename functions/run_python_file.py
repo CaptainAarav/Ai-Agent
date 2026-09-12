@@ -2,6 +2,7 @@ import os
 import subprocess
 from config import FILE_RUN_TIMEOUT
 
+# defines function schema
 schema_run_python_file = {
 	"type": "function",
 	"function": {

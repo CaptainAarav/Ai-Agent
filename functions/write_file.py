@@ -1,5 +1,6 @@
 import os
 
+# defines function schema
 schema_write_file = {
     "type": "function",
     "function": {

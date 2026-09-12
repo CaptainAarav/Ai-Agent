@@ -1,6 +1,7 @@
 import os
 from config import FILE_READ_CHAR_LIMIT
 
+# defines function schema
 schema_get_file_content = {
     "type": "function",
     "function": {
