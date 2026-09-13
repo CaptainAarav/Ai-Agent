@@ -1,6 +1,15 @@
 # CLI AI Agent
 
-A very simple CLI AI Agent, If you have used Claude Code, Codex or Opencode you'll understand what it is, written in python3. I have left it for now because of how big and time consuming it was getting but, I hope to come back and add some more features I had planned or, even rebuild it in C, Go or typescript.
+A very simple CLI AI Agent, If you have used Claude Code, Codex or Opencode you'll understand what it is, written in python3. I have left it for now because of how big and time consuming it was getting but, I hope to come back and add some more features I had planned or, even rebuild it in C, Go or typescript. I also used rich, os, sys, json, argparse, dotenv, openai, requests libraries.
+
+### Usefull Documentation
+- [rich Documentation](https://rich.readthedocs.io/en/stable/introduction.html)
+- [argparse Documentation](https://docs.python.org/3/library/argparse.html)
+- [OpenAi SKD Documentation](https://developers.openai.com/api/reference/python)
+- [requests Documentation](https://requests.readthedocs.io/en/latest/user/quickstart/)
+- [os Documentation](https://docs.python.org/3/library/os.html)
+- [subprocess Documentation](https://docs.python.org/3/library/subprocess.html#subprocess.run)
+
 
 **WARNING: WHILE THE AGENT HAS BASIC PROTECTION IN IT I CAN NOT PROMISE YOU ANYTHING, USE AT YOUR OWN RISK**
 
@@ -156,21 +165,44 @@ For my dev people out there, heres a overview on each file and what it's doing. 
 ### Project Structure
 ```
 Ai-Agent/
-├── main.py                    # entry point — argparse, env loading, client setup
-├── agent.py                   # the core agent loop, tool-call dispatch
-├── display.py                 # all rich terminal output (spinner, panels, tables)
-├── config.py                  # constants + system prompt
+├── main.py                    # entry point(argument parsing, agent loop calling)
+├── agent.py                   # the core agent loop
+├── display.py                 # all rich terminal output
+├── config.py                  # constants and system prompt
 ├── available_functions.py     # collects all tool schemas into one list
 ├── functions/
-│   ├── call_function.py       # maps function names to real functions, injects working_directory
+│   ├── call_function.py       # maps function names to real functions and calls using run python file
 │   ├── get_files_info.py      # lists a directory's contents
-│   ├── get_file_content.py    # reads a file's contents (with a char limit)
+│   ├── get_file_content.py    # reads a file's contents (with a char limit from config)
 │   ├── write_file.py          # writes/overwrites a file
-│   ├── run_python_file.py     # runs a Python file as a subprocess (with a timeout)
-│   └── web_search.py          # searches the web via the Tavily API
-├── .env.example                # template for required environment variables
+│   ├── run_python_file.py     # runs a Python file as a subprocess (with a timeout from config)
+│   └── web_search.py          # searches the web and returns results via the Tavily API
+├── .env.example                # template environment variables
 ├── .gitignore
+├── .python-version             # pins the python version for uv
 ├── pyproject.toml
 ├── uv.lock
-└── README.md
+└── README.md                 # what you're reading
 ```
+
+### Security
+
+To make the agent secure I have implemented:
+- path sandboxing
+- working_directory is never set by agent it is externally injected by us
+- confirmation prompts before any destructive commands are run
+- timeout on subproccess execution
+
+### Error Handling and redunency
+
+Every tool returns a string rather than raising exceptions so that malformed tools are caught and fed back to the model instead of crashing the entire program, every tool is wrapped in try except blocks to catch and gracefully handle Exceptions.
+
+## Limitations
+
+There are a few limitations I have found, some fixiable in future updates and some not:
+- Latex is not rendered
+- One shot answer its not persistant
+- Occasional incorrect function calls from agent
+- Requires files to be in the Agent folder
+- No persistant memory
+- Not production level hardened(no rate limiting, no protection against malicious actors)
